@@ -31,6 +31,7 @@ public class UserManager implements Refreshable {
                 v = this.userRepository.get(k);
             }
             v.setSession(session);
+            v.setTimer(timer);
             return v;
         });
         user.refreshLastOperateTime();

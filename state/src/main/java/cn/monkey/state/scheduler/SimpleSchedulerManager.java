@@ -29,7 +29,7 @@ public class SimpleSchedulerManager<Event> implements SchedulerManager<Event>, C
 
     protected volatile ConcurrentHashMap<Long, StateGroupScheduler> stateGroupSchedulerMap;
 
-    private AtomicLong stateGroupSchedulerIdCounter = new AtomicLong(0);
+    private final AtomicLong stateGroupSchedulerIdCounter = new AtomicLong(0);
 
     public SimpleSchedulerManager(StateGroupPool<Event> stateGroupPool,
                                   StateGroupSchedulerFactory stateGroupSchedulerFactory,
@@ -49,6 +49,7 @@ public class SimpleSchedulerManager<Event> implements SchedulerManager<Event>, C
 
     protected final Map<Long, EventPublishScheduler> initEventPublishSchedulerMap() {
         int eventPublisherSchedulerSize = this.schedulerManagerConfig.getEventPublisherSchedulerSize();
+        // 111111111
         if (eventPublisherSchedulerSize != 1 && (eventPublisherSchedulerSize + 1) % 2 != 0) {
             throw new IllegalArgumentException("invalid eventPublisherSchedulerSize");
         }
@@ -66,7 +67,7 @@ public class SimpleSchedulerManager<Event> implements SchedulerManager<Event>, C
         return this.eventPublishSchedulerMap.get(i);
     }
 
-    protected final void findBestGroup2AddEvent(String groupId, Event event) {
+    protected final void findBestGroupScheduler2AddStateGroup(String groupId, Event event) {
         StateGroupPool.FetchStateGroup<Event> fetchStateGroup = this.stateGroupPool.findOrCreate(groupId);
         StateGroup<Event> stateGroup = fetchStateGroup.getStateGroup();
         if (!fetchStateGroup.isNew()) {
@@ -100,7 +101,7 @@ public class SimpleSchedulerManager<Event> implements SchedulerManager<Event>, C
 
     @Override
     public void addEvent(String groupId, Event event) {
-        this.findEventPublisherScheduler(groupId).publish(() -> this.findBestGroup2AddEvent(groupId, event));
+        this.findEventPublisherScheduler(groupId).publish(() -> this.findBestGroupScheduler2AddStateGroup(groupId, event));
     }
 
     @Override
@@ -114,7 +115,7 @@ public class SimpleSchedulerManager<Event> implements SchedulerManager<Event>, C
     }
 
     @Override
-    public boolean isFull() {
+    public synchronized boolean isFull() {
         return this.size() >= this.schedulerManagerConfig.getStateGroupSchedulerSize();
     }
 

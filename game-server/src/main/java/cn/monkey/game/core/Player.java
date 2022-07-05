@@ -17,10 +17,6 @@ public class Player {
         this.user = user;
     }
 
-    public String getId() {
-        return this.user.getUid();
-    }
-
     public String getUsername() {
         return this.user.getUsername();
     }

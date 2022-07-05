@@ -26,15 +26,15 @@ public class GameDispatcher implements Dispatcher<Command.Package> {
     static final String USER_KEY = "user";
     private final LoadingCache<String, ReentrantLock> lockCache;
     private final SchedulerManager<UserCmdPair> schedulerManager;
-    private final UserManager playerManager;
+    private final UserManager userManager;
     private final Scheduler scheduler;
 
     private final Scheduler loginScheduler;
 
     public GameDispatcher(SchedulerManager<UserCmdPair> schedulerManager,
-                          UserManager playerManager) {
+                          UserManager userManager) {
         this.schedulerManager = schedulerManager;
-        this.playerManager = playerManager;
+        this.userManager = userManager;
         this.lockCache = CacheBuilder.newBuilder()
                 .expireAfterAccess(Duration.ofSeconds(2))
                 .build(new CacheLoader<>() {
@@ -67,7 +67,7 @@ public class GameDispatcher implements Dispatcher<Command.Package> {
                             }
                         })
                         .map(Game.Session::getToken)
-                        .map(token -> this.playerManager.findOrCreate(session, token))
+                        .map(token -> this.userManager.findOrCreate(session, token))
                         .doOnNext(user -> session.setAttribute(USER_KEY, user))
                         .switchIfEmpty(Mono.error(new IllegalArgumentException("invalid token")))
                         .doOnError(e -> session.write(GameCmdUtil.error(e)))
