@@ -52,7 +52,7 @@ public class ProtoBufWebSocketChannelHandler extends SimpleChannelInboundHandler
         }
         Session session = this.sessionManager.findOrCreate(ctx);
         if (this.filters != null && filters.size() > 0) {
-            for (Filter f : this.filters) {
+            for (Filter<Command.Package> f : this.filters) {
                 if (!f.filter(session, pkg)) {
                     return;
                 }

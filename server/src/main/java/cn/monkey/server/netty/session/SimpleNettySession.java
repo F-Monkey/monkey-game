@@ -27,13 +27,15 @@ public class SimpleNettySession implements Session {
     }
 
     @Override
-    public <T> T setAttribute(AttributeKey<T> key, T val) {
-        return this.ctx.channel().attr(key).getAndSet(val);
+    public <T> T setAttribute(String key, T val) {
+        AttributeKey<T> attributeKey = AttributeKey.newInstance(key);
+        return this.ctx.channel().attr(attributeKey).getAndSet(val);
     }
 
     @Override
-    public <T> T getAttribute(AttributeKey<T> key) {
-        return this.ctx.channel().attr(key).get();
+    public <T> T getAttribute(String key) {
+        AttributeKey<T> attributeKey = AttributeKey.newInstance(key);
+        return this.ctx.channel().attr(attributeKey).get();
     }
 
     @Override

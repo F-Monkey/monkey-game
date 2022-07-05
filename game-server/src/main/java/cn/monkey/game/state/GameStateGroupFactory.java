@@ -11,7 +11,11 @@ public class GameStateGroupFactory extends SimpleStateGroupFactory<UserCmdPair> 
     }
 
     @Override
-    public StateGroup<UserCmdPair> create(String id) {
-        return super.create(id);
+    public GameStateGroup create(String id) {
+        GameStateContext gameStateContext = new GameStateContext(4);
+        GameStateGroup gameStateGroup = new GameStateGroup(id, gameStateContext, false);
+        gameStateGroup.addState(new StartState(super.timer, gameStateGroup));
+        gameStateGroup.setStartState(StartState.CODE);
+        return gameStateGroup;
     }
 }

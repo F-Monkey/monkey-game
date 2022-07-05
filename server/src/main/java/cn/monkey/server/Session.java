@@ -9,9 +9,9 @@ public interface Session extends Closeable {
 
     String id();
 
-    <T> T setAttribute(AttributeKey<T> key, T val);
+    <T> T setAttribute(String key, T val);
 
-    <T> T getAttribute(AttributeKey<T> key);
+    <T> T getAttribute(String key);
 
     void write(Object data);
 

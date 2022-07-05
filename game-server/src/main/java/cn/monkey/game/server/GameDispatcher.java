@@ -2,7 +2,6 @@ package cn.monkey.game.server;
 
 import cn.monkey.game.core.UserCmdPair;
 import cn.monkey.game.core.UserManager;
-import cn.monkey.game.data.User;
 import cn.monkey.game.utils.GameCmdUtil;
 import cn.monkey.proto.CmdType;
 import cn.monkey.proto.Command;
@@ -14,7 +13,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.protobuf.InvalidProtocolBufferException;
-import io.netty.util.AttributeKey;
 import org.springframework.lang.NonNull;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
@@ -25,7 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class GameDispatcher implements Dispatcher<Command.Package> {
 
-    static final AttributeKey<User> USER_KEY = AttributeKey.newInstance("user");
+    static final String USER_KEY = "user";
     private final LoadingCache<String, ReentrantLock> lockCache;
     private final SchedulerManager<UserCmdPair> schedulerManager;
     private final UserManager playerManager;
@@ -47,7 +45,7 @@ public class GameDispatcher implements Dispatcher<Command.Package> {
                     }
                 });
         this.scheduler = Schedulers.newSingle("dispatcher");
-        this.loginScheduler = Schedulers.newParallel("login", 5);
+        this.loginScheduler = Schedulers.newParallel("login", 4);
     }
 
 
@@ -71,7 +69,7 @@ public class GameDispatcher implements Dispatcher<Command.Package> {
                         .map(Game.Session::getToken)
                         .map(token -> this.playerManager.findOrCreate(session, token))
                         .doOnNext(user -> session.setAttribute(USER_KEY, user))
-                        .switchIfEmpty(Mono.error(new IllegalArgumentException("session is not exists")))
+                        .switchIfEmpty(Mono.error(new IllegalArgumentException("invalid token")))
                         .doOnError(e -> session.write(GameCmdUtil.error(e)))
                         .subscribeOn(this.loginScheduler)
                         .subscribe();

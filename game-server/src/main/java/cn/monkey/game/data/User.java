@@ -17,7 +17,7 @@ public class User implements Serializable {
 
     private volatile long lastOperateTime;
 
-    public User(String uid,String username){
+    public User(String uid, String username) {
         this.uid = uid;
         this.username = username;
     }
@@ -30,7 +30,7 @@ public class User implements Serializable {
         this.session = session;
     }
 
-    public void write(Command.PackageGroup packageGroup){
+    public void write(Command.PackageGroup packageGroup) {
         this.session.write(packageGroup);
     }
 
@@ -38,7 +38,7 @@ public class User implements Serializable {
         return uid;
     }
 
-    public boolean isActive(){
+    public boolean isActive() {
         return this.session.isActive();
     }
 
