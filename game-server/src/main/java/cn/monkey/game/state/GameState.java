@@ -1,7 +1,7 @@
 package cn.monkey.game.state;
 
 import cn.monkey.commons.utils.Timer;
-import cn.monkey.game.core.PlayerCmdPair;
+import cn.monkey.game.core.UserCmdPair;
 import cn.monkey.game.data.User;
 import cn.monkey.game.utils.GameCmdUtil;
 import cn.monkey.proto.CmdType;
@@ -11,14 +11,14 @@ import cn.monkey.state.core.OncePerInitState;
 import com.google.common.base.Strings;
 import com.google.protobuf.InvalidProtocolBufferException;
 
-public abstract class GameState extends OncePerInitState<PlayerCmdPair> {
+public abstract class GameState extends OncePerInitState<UserCmdPair> {
 
     public GameState(Timer timer, GameStateGroup stateGroup) {
         super(timer, stateGroup);
     }
 
     @Override
-    public void fireEvent(PlayerCmdPair playerCmdPair) throws Exception {
+    public void fireEvent(UserCmdPair playerCmdPair) throws Exception {
         Command.Package pkg = playerCmdPair.getPkg();
         int cmdType = pkg.getCmdType();
         if (cmdType == CmdType.ENTER) {
@@ -26,6 +26,16 @@ public abstract class GameState extends OncePerInitState<PlayerCmdPair> {
             return;
         }
         this.handleCmd(playerCmdPair.getUser(), pkg);
+    }
+
+    @Override
+    public void fireEventOnError(UserCmdPair userCmdPair, Exception e) {
+        User user = userCmdPair.getUser();
+        if (e instanceof InvalidProtocolBufferException) {
+            user.write(GameCmdUtil.error(new IllegalArgumentException("bad package")));
+            return;
+        }
+        user.write(GameCmdUtil.error(e));
     }
 
     @Override
@@ -56,7 +66,7 @@ public abstract class GameState extends OncePerInitState<PlayerCmdPair> {
                 return;
             }
         }
-        if(!stateContext.tryAddPlayer(user)){
+        if (!stateContext.tryAddPlayer(user)) {
             user.write(GameCmdUtil.enterFail("room is full"));
             return;
         }

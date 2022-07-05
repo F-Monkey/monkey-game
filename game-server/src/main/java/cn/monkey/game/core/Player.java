@@ -36,4 +36,8 @@ public class Player {
     public void setReady(boolean ready) {
         this.isReady = ready;
     }
+
+    public boolean isReady() {
+        return isReady;
+    }
 }

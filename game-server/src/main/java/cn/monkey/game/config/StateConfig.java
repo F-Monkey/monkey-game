@@ -1,7 +1,7 @@
 package cn.monkey.game.config;
 
 import cn.monkey.commons.utils.Timer;
-import cn.monkey.game.core.PlayerCmdPair;
+import cn.monkey.game.core.UserCmdPair;
 import cn.monkey.state.core.SimpleStateGroupFactory;
 import cn.monkey.state.core.SimpleStateGroupPool;
 import cn.monkey.state.core.StateGroupFactory;
@@ -30,12 +30,12 @@ public class StateConfig {
     }
 
     @Bean
-    StateGroupFactory<PlayerCmdPair> stateGroupFactory(Timer timer) {
+    StateGroupFactory<UserCmdPair> stateGroupFactory(Timer timer) {
         return new SimpleStateGroupFactory<>(timer);
     }
 
     @Bean
-    StateGroupPool<PlayerCmdPair> stateGroupPool(StateGroupFactory<PlayerCmdPair> stateGroupFactory) {
+    StateGroupPool<UserCmdPair> stateGroupPool(StateGroupFactory<UserCmdPair> stateGroupFactory) {
         return new SimpleStateGroupPool<>(stateGroupFactory);
     }
 
@@ -51,10 +51,10 @@ public class StateConfig {
     }
 
     @Bean
-    SchedulerManager<PlayerCmdPair> schedulerManager(StateGroupPool<PlayerCmdPair> stateGroupPool,
-                                                     StateGroupSchedulerFactory stateGroupSchedulerFactory,
-                                                     EventPublishSchedulerFactory eventPublishSchedulerFactory,
-                                                     SchedulerManagerConfig schedulerManagerConfig) {
+    SchedulerManager<UserCmdPair> schedulerManager(StateGroupPool<UserCmdPair> stateGroupPool,
+                                                   StateGroupSchedulerFactory stateGroupSchedulerFactory,
+                                                   EventPublishSchedulerFactory eventPublishSchedulerFactory,
+                                                   SchedulerManagerConfig schedulerManagerConfig) {
         return new SimpleSchedulerManager<>(stateGroupPool, stateGroupSchedulerFactory, eventPublishSchedulerFactory, schedulerManagerConfig);
     }
 }

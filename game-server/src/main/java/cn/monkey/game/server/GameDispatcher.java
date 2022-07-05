@@ -1,6 +1,6 @@
 package cn.monkey.game.server;
 
-import cn.monkey.game.core.PlayerCmdPair;
+import cn.monkey.game.core.UserCmdPair;
 import cn.monkey.game.core.UserManager;
 import cn.monkey.game.data.User;
 import cn.monkey.game.utils.GameCmdUtil;
@@ -19,7 +19,6 @@ import org.springframework.lang.NonNull;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
-import reactor.util.function.Tuples;
 
 import java.time.Duration;
 import java.util.concurrent.locks.ReentrantLock;
@@ -28,13 +27,13 @@ public class GameDispatcher implements Dispatcher<Command.Package> {
 
     static final AttributeKey<User> USER_KEY = AttributeKey.newInstance("user");
     private final LoadingCache<String, ReentrantLock> lockCache;
-    private final SchedulerManager<PlayerCmdPair> schedulerManager;
+    private final SchedulerManager<UserCmdPair> schedulerManager;
     private final UserManager playerManager;
     private final Scheduler scheduler;
 
     private final Scheduler loginScheduler;
 
-    public GameDispatcher(SchedulerManager<PlayerCmdPair> schedulerManager,
+    public GameDispatcher(SchedulerManager<UserCmdPair> schedulerManager,
                           UserManager playerManager) {
         this.schedulerManager = schedulerManager;
         this.playerManager = playerManager;
@@ -80,7 +79,7 @@ public class GameDispatcher implements Dispatcher<Command.Package> {
                 Mono.just(pkg)
                         .map(Command.Package::getGroupId)
                         .switchIfEmpty(Mono.error(new IllegalArgumentException("groupId is required")))
-                        .doOnNext(t -> this.schedulerManager.addEvent(t, new PlayerCmdPair(session.getAttribute(USER_KEY), pkg)))
+                        .doOnNext(t -> this.schedulerManager.addEvent(t, new UserCmdPair(session.getAttribute(USER_KEY), pkg)))
                         .doOnError(e -> session.write(GameCmdUtil.error(e)))
                         .subscribeOn(this.scheduler)
                         .subscribe();
