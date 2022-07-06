@@ -1,6 +1,8 @@
 package cn.monkey.state.scheduler;
 
 public class SchedulerManagerConfig {
+
+    private SchedulerManagerConfig(){}
     private static final int DEFAULT_STATE_GROUP_SCHEDULER_MAX_SIZE = 10;
 
     private static final int DEFAULT_STATE_GROUP_SCHEDULER_CORE_SIZE = 4;

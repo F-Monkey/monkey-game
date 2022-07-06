@@ -21,6 +21,10 @@ public class SimpleStateGroupSchedulerFactory implements StateGroupSchedulerFact
 
     @Override
     public StateGroupScheduler create(long id) {
+        int maxSize = this.stateGroupFactoryConfig.getMaxSize();
+        if (1 == maxSize) {
+            return new SingleStateGroupScheduler(id, this.waitingStrategy, this.threadFactory);
+        }
         return new SimpleStateGroupScheduler(id,
                 this.waitingStrategy,
                 this.threadFactory,

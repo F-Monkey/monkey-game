@@ -21,7 +21,7 @@ public class SingleStateGroupScheduler extends EventLoopScheduler implements Sta
 
     @Override
     public boolean isEmpty() {
-        return this.stateGroup == null;
+        return null == this.stateGroup;
     }
 
     @Override

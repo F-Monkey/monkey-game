@@ -12,6 +12,7 @@ public class SimpleStateGroupPool<E> implements StateGroupPool<E>, Refreshable {
     protected volatile ConcurrentHashMap<String, StateGroup<E>> stateGroupMap;
 
     public SimpleStateGroupPool(StateGroupFactory<E> stateGroupFactory) {
+        this.stateGroupMap = new ConcurrentHashMap<>();
         this.stateGroupFactory = stateGroupFactory;
     }
 

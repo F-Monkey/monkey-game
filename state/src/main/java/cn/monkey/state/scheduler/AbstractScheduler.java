@@ -11,14 +11,13 @@ public abstract class AbstractScheduler implements Scheduler {
 
     private final long id;
 
-    protected final Thread t;
+    protected Thread t;
 
     protected final AtomicBoolean isStarted;
 
     public AbstractScheduler(long id) {
         this.id = id;
         this.isStarted = new AtomicBoolean(false);
-        this.t = this.newThread();
     }
 
     protected abstract Thread newThread();
@@ -31,6 +30,9 @@ public abstract class AbstractScheduler implements Scheduler {
     @Override
     public void start() {
         if (this.isStarted.compareAndSet(false, true)) {
+            if (null == this.t) {
+                this.t = newThread();
+            }
             log.info("{} is start", this.id());
             this.t.start();
         }

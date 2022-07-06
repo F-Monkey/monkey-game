@@ -63,7 +63,7 @@ public class SimpleSchedulerManager<Event> implements SchedulerManager<Event>, C
     }
 
     protected final EventPublishScheduler findEventPublisherScheduler(String groupId) {
-        long i = groupId.hashCode() & this.eventPublishSchedulerMap.size();
+        long i = (groupId.hashCode() & this.eventPublishSchedulerMap.size()) - 1;
         return this.eventPublishSchedulerMap.get(i);
     }
 
@@ -92,6 +92,7 @@ public class SimpleSchedulerManager<Event> implements SchedulerManager<Event>, C
             return;
         }
         StateGroupScheduler scheduler = this.stateGroupSchedulerFactory.create(stateGroupSchedulerIdCounter.getAndIncrement());
+        stateGroup.addEvent(event);
         scheduler.tryAddStateGroup(stateGroup);
         stateGroupSchedulerMap.put(scheduler.id(), scheduler);
         scheduler.start();
