@@ -34,7 +34,6 @@ public class StateTest {
             SimpleStateGroup<PlayerCmdPair> stateGroup = new SimpleStateGroup<>(id, gameStateContext, false);
             stateGroup.addState(new StartState(super.timer, stateGroup));
             stateGroup.addState(new PlayingState(super.timer, stateGroup));
-            stateGroup.addState(new GameEndState(super.timer, stateGroup));
             stateGroup.setStartState(StartState.CODE);
             return stateGroup;
         }
@@ -161,21 +160,6 @@ public class StateTest {
         @Override
         public String finish() throws Exception {
             System.out.println("state: " + this.code() + " is finished");
-            return GameEndState.CODE;
-        }
-    }
-
-    static class GameEndState extends GameState {
-
-        public static String CODE = "gameEnd";
-
-        @Override
-        public void init() throws Exception {
-            this.onInit();
-        }
-
-        @Override
-        protected void onInit() {
             GameStateContext stateContext = getStateContext();
             List<PlayerCmdPair> playerCmdPairs = stateContext.getPlayerCmdPairs();
             Map<String, List<String>> cmdMap = new HashMap<>();
@@ -216,27 +200,7 @@ public class StateTest {
                         System.out.println("losers: ");
                         System.out.println(rocks);
                     }
-
             }
-        }
-
-        @Override
-        public void update(StateInfo stateInfo) throws Exception {
-            stateInfo.isFinish = true;
-        }
-
-        public GameEndState(Timer timer, StateGroup<PlayerCmdPair> stateGroup) {
-            super(timer, stateGroup);
-        }
-
-        @Override
-        public String code() {
-            return CODE;
-        }
-
-        @Override
-        public String finish() throws Exception {
-            GameStateContext stateContext = getStateContext();
             stateContext.clear();
             return StartState.CODE;
         }
@@ -285,7 +249,7 @@ public class StateTest {
             playerCmdPair.cmd = cmd;
             schedulerManager.addEvent(groupId, playerCmdPair);
             try {
-                Thread.sleep(50);
+                Thread.sleep(5);
             } catch (InterruptedException ignore) {
             }
         }

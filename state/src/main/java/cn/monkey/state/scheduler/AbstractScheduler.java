@@ -3,6 +3,7 @@ package cn.monkey.state.scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class AbstractScheduler implements Scheduler {
@@ -11,16 +12,24 @@ public abstract class AbstractScheduler implements Scheduler {
 
     private final long id;
 
-    protected Thread t;
+    protected final ThreadFactory threadFactory;
+
+    protected final Thread t;
 
     protected final AtomicBoolean isStarted;
 
-    public AbstractScheduler(long id) {
+    public AbstractScheduler(long id, ThreadFactory threadFactory) {
         this.id = id;
+        this.threadFactory = threadFactory;
         this.isStarted = new AtomicBoolean(false);
+        this.t = this.newThread();
     }
 
-    protected abstract Thread newThread();
+    protected Thread newThread() {
+        return this.threadFactory.newThread(() -> {
+            log.info("id: {} start", id());
+        });
+    }
 
     @Override
     public long id() {
@@ -30,9 +39,6 @@ public abstract class AbstractScheduler implements Scheduler {
     @Override
     public void start() {
         if (this.isStarted.compareAndSet(false, true)) {
-            if (null == this.t) {
-                this.t = newThread();
-            }
             log.info("{} is start", this.id());
             this.t.start();
         }

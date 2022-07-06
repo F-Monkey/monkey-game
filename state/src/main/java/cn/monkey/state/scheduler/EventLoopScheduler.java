@@ -8,19 +8,16 @@ public abstract class EventLoopScheduler extends AbstractScheduler {
 
     protected final WaitingStrategy waitingStrategy;
 
-    protected final ThreadFactory threadFactory;
-
     public EventLoopScheduler(long id,
                               WaitingStrategy waitingStrategy,
                               ThreadFactory threadFactory) {
-        super(id);
+        super(id, threadFactory);
         this.waitingStrategy = waitingStrategy;
-        this.threadFactory = threadFactory;
     }
 
     @Override
     protected Thread newThread() {
-        return this.threadFactory.newThread(() -> {
+        return super.threadFactory.newThread(() -> {
             for (; ; ) {
                 try {
                     this.waitingStrategy.await();
