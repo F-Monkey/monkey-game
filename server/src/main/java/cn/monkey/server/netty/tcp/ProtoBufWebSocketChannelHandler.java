@@ -42,8 +42,9 @@ public class ProtoBufWebSocketChannelHandler extends SimpleChannelInboundHandler
     protected void channelRead0(ChannelHandlerContext ctx, BinaryWebSocketFrame msg) throws Exception {
         ByteBuf byteBuf = Unpooled.copiedBuffer(msg.content());
         Command.Package pkg;
+        byte[] array = byteBuf.array();
         try {
-            pkg = Command.Package.parseFrom(byteBuf.array());
+            pkg = Command.Package.parseFrom(array);
         } catch (InvalidProtocolBufferException e) {
             log.error("data parse error:\n", e);
             return;

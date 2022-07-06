@@ -63,7 +63,7 @@ public class SimpleSchedulerManager<Event> implements SchedulerManager<Event>, C
     }
 
     protected final EventPublishScheduler findEventPublisherScheduler(String groupId) {
-        long i = (groupId.hashCode() & this.eventPublishSchedulerMap.size()) - 1;
+        long i = groupId.hashCode() & (this.eventPublishSchedulerMap.size() - 1);
         return this.eventPublishSchedulerMap.get(i);
     }
 
