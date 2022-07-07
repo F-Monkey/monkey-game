@@ -3,7 +3,6 @@ package cn.monkey.state.test;
 import cn.monkey.commons.utils.Timer;
 import cn.monkey.state.core.*;
 import cn.monkey.state.scheduler.*;
-import cn.monkey.state.scheduler.disruptor.SimpleDisruptorEventPublishSchedulerFactory;
 
 import java.util.*;
 import java.util.concurrent.BrokenBarrierException;

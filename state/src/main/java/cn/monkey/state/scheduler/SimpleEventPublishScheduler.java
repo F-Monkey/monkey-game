@@ -4,6 +4,7 @@ import cn.monkey.state.scheduler.strategy.WaitingStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -14,7 +15,7 @@ public class SimpleEventPublishScheduler extends EventLoopScheduler implements E
 
     public SimpleEventPublishScheduler(long id, WaitingStrategy waitingStrategy, ThreadFactory threadFactory) {
         super(id, waitingStrategy, threadFactory);
-        this.taskQueue = new LinkedBlockingQueue<>();
+        this.taskQueue = new ArrayBlockingQueue<>(1024);
     }
 
     @Override
