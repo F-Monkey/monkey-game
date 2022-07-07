@@ -43,7 +43,7 @@ public class SingleStateGroupScheduler extends EventLoopScheduler implements Sta
 
     @Override
     public boolean tryAddStateGroup(StateGroup<?> stateGroup) {
-        return STATE_GROUP_UPDATER.compareAndSet(this, null, stateGroup);
+        return STATE_GROUP_UPDATER.compareAndSet(this, null, stateGroup) && this.isStarted();
     }
 
     @Override

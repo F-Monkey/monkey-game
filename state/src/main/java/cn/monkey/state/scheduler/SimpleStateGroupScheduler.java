@@ -42,7 +42,7 @@ public class SimpleStateGroupScheduler extends EventLoopScheduler implements Sta
 
     @Override
     public boolean tryAddStateGroup(StateGroup<?> stateGroup) {
-        if (!STATE_GROUP_UPDATER.compareAndSet(this, null, stateGroup)) {
+        if (!STATE_GROUP_UPDATER.compareAndSet(this, null, stateGroup) || !this.isStarted()) {
             return false;
         }
         final ConcurrentHashMap<String, StateGroup<?>> stateGroupMap = this.stateGroupMap;

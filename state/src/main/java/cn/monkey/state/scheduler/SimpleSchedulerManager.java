@@ -87,10 +87,10 @@ public class SimpleSchedulerManager<Event> implements SchedulerManager<Event>, C
             return;
         }
         StateGroupScheduler scheduler = this.stateGroupSchedulerFactory.create(stateGroupSchedulerIdCounter.getAndIncrement());
+        scheduler.start();
         stateGroup.addEvent(event);
         scheduler.tryAddStateGroup(stateGroup);
         stateGroupSchedulerMap.put(scheduler.id(), scheduler);
-        scheduler.start();
         this.stateGroupSchedulerMap = stateGroupSchedulerMap;
     }
 
