@@ -250,7 +250,7 @@ public class StateTest2 {
 
         CyclicBarrier cyclicBarrier = new CyclicBarrier(names.length, () -> {
             try {
-                Thread.sleep(10);
+                Thread.sleep(5);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

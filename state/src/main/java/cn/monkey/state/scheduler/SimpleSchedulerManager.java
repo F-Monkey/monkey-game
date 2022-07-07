@@ -7,11 +7,8 @@ import cn.monkey.state.core.StateGroupPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class SimpleSchedulerManager<Event> implements SchedulerManager<Event>, Countable, Refreshable {
 
@@ -23,7 +20,7 @@ public class SimpleSchedulerManager<Event> implements SchedulerManager<Event>, C
 
     protected final EventPublishSchedulerFactory eventPublishSchedulerFactory;
 
-    protected final Map<Long, EventPublishScheduler> eventPublishSchedulerMap;
+    protected final EventPublishScheduler[] eventPublishSchedulers;
 
     protected final SchedulerManagerConfig schedulerManagerConfig;
 
@@ -39,7 +36,7 @@ public class SimpleSchedulerManager<Event> implements SchedulerManager<Event>, C
         this.stateGroupSchedulerFactory = stateGroupSchedulerFactory;
         this.eventPublishSchedulerFactory = eventPublishSchedulerFactory;
         this.schedulerManagerConfig = managerConfig;
-        this.eventPublishSchedulerMap = this.initEventPublishSchedulerMap();
+        this.eventPublishSchedulers = this.initEventPublishSchedulers();
         this.stateGroupSchedulerMap = this.createStateGroupSchedulerMap();
     }
 
@@ -47,27 +44,25 @@ public class SimpleSchedulerManager<Event> implements SchedulerManager<Event>, C
         return new ConcurrentHashMap<>();
     }
 
-    protected final Map<Long, EventPublishScheduler> initEventPublishSchedulerMap() {
+    protected final EventPublishScheduler[] initEventPublishSchedulers() {
         int eventPublisherSchedulerSize = this.schedulerManagerConfig.getEventPublisherSchedulerSize();
-        // 111111111
         if (eventPublisherSchedulerSize != 1 && (eventPublisherSchedulerSize + 1) % 2 != 0) {
             throw new IllegalArgumentException("invalid eventPublisherSchedulerSize");
         }
-        return IntStream.range(0, eventPublisherSchedulerSize)
-                .mapToObj(i -> {
-                    EventPublishScheduler scheduler = this.eventPublishSchedulerFactory.create(i);
-                    scheduler.start();
-                    return scheduler;
-                })
-                .collect(Collectors.toMap(EventPublishScheduler::id, e -> e));
+        EventPublishScheduler[] eventPublishSchedulers = new EventPublishScheduler[eventPublisherSchedulerSize];
+        for (int i = 0; i < eventPublisherSchedulerSize; i++) {
+            eventPublishSchedulers[i] = this.eventPublishSchedulerFactory.create(i);
+            eventPublishSchedulers[i].start();
+        }
+        return eventPublishSchedulers;
     }
 
     protected final EventPublishScheduler findEventPublisherScheduler(String groupId) {
-        long i = groupId.hashCode() & (this.eventPublishSchedulerMap.size() - 1);
-        return this.eventPublishSchedulerMap.get(i);
+        int length = this.eventPublishSchedulers.length;
+        return this.eventPublishSchedulers[groupId.hashCode() & (length - 1)];
     }
 
-    protected final void findBestGroupScheduler2AddStateGroup(String groupId, Event event) {
+    protected void findBestGroupScheduler2AddStateGroup(String groupId, Event event) {
         StateGroupPool.FetchStateGroup<Event> fetchStateGroup = this.stateGroupPool.findOrCreate(groupId);
         StateGroup<Event> stateGroup = fetchStateGroup.getStateGroup();
         if (!fetchStateGroup.isNew()) {
@@ -128,7 +123,6 @@ public class SimpleSchedulerManager<Event> implements SchedulerManager<Event>, C
             return;
         }
         for (StateGroupScheduler scheduler : this.stateGroupSchedulerMap.values()) {
-            // StateGroupScheduler 的数量最好超过 EventPublisherScheduler的数量
             if (scheduler.isEmpty() && size > this.schedulerManagerConfig.getStateGroupSchedulerCoreSize()) {
                 scheduler.stop();
                 size--;
