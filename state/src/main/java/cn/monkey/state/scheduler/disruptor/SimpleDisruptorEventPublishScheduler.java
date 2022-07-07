@@ -1,23 +1,27 @@
 package cn.monkey.state.scheduler.disruptor;
 
 import cn.monkey.state.scheduler.EventPublishScheduler;
-import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.RingBuffer;
+import com.lmax.disruptor.YieldingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SimpleDisruptorEventPublishScheduler implements EventPublishScheduler {
 
     protected final long id;
 
+    protected final AtomicBoolean isStarted;
+
     protected final Disruptor<RunnerEvent> disruptor;
 
     public SimpleDisruptorEventPublishScheduler(long id, ThreadFactory threadFactory) {
         this.id = id;
+        this.isStarted = new AtomicBoolean(false);
         EventPublisherFactory eventPublisherFactory = new EventPublisherFactory();
-        this.disruptor = new Disruptor<>(eventPublisherFactory, 1 << 10, threadFactory, ProducerType.SINGLE, new BlockingWaitStrategy());
+        this.disruptor = new Disruptor<>(eventPublisherFactory, 1 << 10, threadFactory, ProducerType.SINGLE, new YieldingWaitStrategy());
         this.disruptor.handleEventsWith(new EventPublishConsumer());
     }
 
@@ -40,16 +44,20 @@ public class SimpleDisruptorEventPublishScheduler implements EventPublishSchedul
 
     @Override
     public void start() {
-        this.disruptor.start();
+        if (this.isStarted.compareAndSet(false, true)) {
+            this.disruptor.start();
+        }
     }
 
     @Override
     public boolean isStarted() {
-        return this.disruptor.hasStarted();
+        return this.isStarted.get();
     }
 
     @Override
     public void stop() {
-        this.disruptor.shutdown();
+        if (this.isStarted.compareAndSet(true, false)) {
+            this.disruptor.shutdown();
+        }
     }
 }

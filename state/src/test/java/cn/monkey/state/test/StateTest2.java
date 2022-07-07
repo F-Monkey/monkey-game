@@ -237,7 +237,7 @@ public class StateTest2 {
 
         StateGroupSchedulerFactory stateGroupSchedulerFactory = new SimpleStateGroupSchedulerFactory(stateGroupSchedulerFactoryConfig);
 
-        EventPublishSchedulerFactory eventPublishSchedulerFactory = new SimpleDisruptorEventPublishSchedulerFactory();
+        EventPublishSchedulerFactory eventPublishSchedulerFactory = new SimpleEventPublishSchedulerFactory();
 
         SchedulerManagerConfig schedulerManagerConfig = SchedulerManagerConfig.newBuilder().eventPublisherSchedulerSize(1)
                 .stateGroupSchedulerCoreSize(1).stateGroupSchedulerSize(2).build();
