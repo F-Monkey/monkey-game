@@ -46,7 +46,7 @@ public class SimpleSchedulerManager<Event> implements SchedulerManager<Event>, C
 
     protected final EventPublishScheduler[] initEventPublishSchedulers() {
         int eventPublisherSchedulerSize = this.schedulerManagerConfig.getEventPublisherSchedulerSize();
-        if (eventPublisherSchedulerSize != 1 && (eventPublisherSchedulerSize + 1) % 2 != 0) {
+        if (eventPublisherSchedulerSize != 1 && eventPublisherSchedulerSize % 2 != 0) {
             throw new IllegalArgumentException("invalid eventPublisherSchedulerSize");
         }
         EventPublishScheduler[] eventPublishSchedulers = new EventPublishScheduler[eventPublisherSchedulerSize];

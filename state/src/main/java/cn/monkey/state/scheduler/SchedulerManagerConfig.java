@@ -6,7 +6,7 @@ public class SchedulerManagerConfig {
     private static final int DEFAULT_STATE_GROUP_SCHEDULER_MAX_SIZE = 10;
 
     private static final int DEFAULT_STATE_GROUP_SCHEDULER_CORE_SIZE = 4;
-    private static final int DEFAULT_EVENT_PUBLISH_SCHEDULER_SIZE = (1 << 2) - 1;
+    private static final int DEFAULT_EVENT_PUBLISH_SCHEDULER_SIZE = 1 << 2;
 
     private int stateGroupSchedulerSize = DEFAULT_STATE_GROUP_SCHEDULER_MAX_SIZE;
     private int eventPublisherSchedulerSize = DEFAULT_EVENT_PUBLISH_SCHEDULER_SIZE;

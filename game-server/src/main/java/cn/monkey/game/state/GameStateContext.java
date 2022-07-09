@@ -43,6 +43,10 @@ public class GameStateContext implements StateContext {
         return password;
     }
 
+    public boolean isFull(){
+        return this.players.size() >= this.playerSize;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }

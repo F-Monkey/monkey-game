@@ -71,6 +71,7 @@ public abstract class GameState extends OncePerInitState<UserCmdPair> {
             return;
         }
         user.write(GameCmdUtil.enterSuccess(stateContext));
+        // TODO
     }
 
     protected void handleCmd(User user, Command.Package pkg) {

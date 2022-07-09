@@ -3,6 +3,7 @@ package cn.monkey.game.data;
 import cn.monkey.commons.utils.Timer;
 import cn.monkey.proto.Command;
 import cn.monkey.server.Session;
+import org.springframework.lang.NonNull;
 
 import java.io.Serializable;
 
@@ -26,7 +27,7 @@ public class User implements Serializable {
         this.timer = timer;
     }
 
-    public void setSession(Session session) {
+    public void setSession(@NonNull Session session) {
         this.session = session;
     }
 

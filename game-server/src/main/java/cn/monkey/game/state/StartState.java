@@ -11,9 +11,15 @@ public class StartState extends GameState {
     }
 
     @Override
+    protected void onInit() {
+        // todo introduce game info
+    }
+
+    @Override
     public String code() {
         return CODE;
     }
+
 
     @Override
     public String finish() throws Exception {
