@@ -46,8 +46,8 @@ public class SimpleSchedulerManager<Event> implements SchedulerManager<Event>, C
 
     protected final EventPublishScheduler[] initEventPublishSchedulers() {
         int eventPublisherSchedulerSize = this.schedulerManagerConfig.getEventPublisherSchedulerSize();
-        if (eventPublisherSchedulerSize != 1 && eventPublisherSchedulerSize % 2 != 0) {
-            throw new IllegalArgumentException("invalid eventPublisherSchedulerSize");
+        if (eventPublisherSchedulerSize != 1 && Integer.bitCount(eventPublisherSchedulerSize) != 1) {
+            throw new IllegalArgumentException("bufferSize must be a power of 2 or equals to 1");
         }
         EventPublishScheduler[] eventPublishSchedulers = new EventPublishScheduler[eventPublisherSchedulerSize];
         for (int i = 0; i < eventPublisherSchedulerSize; i++) {
@@ -83,8 +83,7 @@ public class SimpleSchedulerManager<Event> implements SchedulerManager<Event>, C
             }
         }
         if (this.isFull()) {
-            log.error("schedulerManager is full");
-            return;
+            throw new IllegalArgumentException("can not add any stateGroupScheduler");
         }
         StateGroupScheduler scheduler = this.stateGroupSchedulerFactory.create(stateGroupSchedulerIdCounter.getAndIncrement());
         scheduler.start();
